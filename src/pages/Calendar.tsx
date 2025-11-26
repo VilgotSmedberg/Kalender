@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import CalendarCell from '../components/CalendarCell'
 import AddActivityMenu from '../components/AddActivityMenu'
-import { createReadStream } from 'fs';
 
 function getDaysInMonth(month: number, year: number): number {
     return new Date(year, month, 0).getDate();
@@ -9,28 +8,27 @@ function getDaysInMonth(month: number, year: number): number {
 
 function Calendar() {
 
-    const currentMonth = 10;
-    const currentYear = 2025;
+    const currentMonth:number =4;
+    const currentYear: number= 2026;
     const daysInMonth = getDaysInMonth(currentMonth, currentYear);
 
     const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
     const prevMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
-    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1 : currentYear;
+    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
     const nextMonthYear = currentMonth === 12 ? currentYear + 1 : currentYear;
     const daysInPrevMonth = getDaysInMonth(prevMonth, prevMonthYear);
 
-    const firstDayOfWeek = new Date(currentYear, currentMonth - 1, 1).getDay();
+    const firstDayOfWeek = (new Date(currentYear, currentMonth - 1, 1).getDay() + 6) % 7;
     const totalCells = Math.ceil((daysInMonth + firstDayOfWeek) / 7) * 7;
 
     const cellsArray = Array.from({length: totalCells }, (_, i) => {
         if (i < firstDayOfWeek) {
             // previous month
-            return (
-                day: dayInPrevMonth
-            )
+            const dayInPrevMonth = daysInPrevMonth - firstDayOfWeek + i + 1;
+            return dayInPrevMonth;
         }
         const dayNum = i - firstDayOfWeek + 1;
-        return dayNum > 0 && dayNum <= daysInMonth ? dayNum : null;
+        return dayNum <= daysInMonth ? dayNum : null;
     });
 
     const rows = Array.from({ length: totalCells / 7}, (_, rowIdx) => 
@@ -61,14 +59,6 @@ function Calendar() {
         localStorage.setItem('count', '0'.toString())
         setCount(0)
     }
-
-
-    useEffect(() => {
-        const storedCount = localStorage.getItem('count');
-        if (storedCount !== null) {
-            setCount(Number (storedCount));
-        }
-    })
 
     return (
         <div>
